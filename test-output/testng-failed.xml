@@ -4,14 +4,14 @@
   <listeners>
     <listener class-name="com.dwp.qa.testdata.Listeners"/>
   </listeners>
-  <test thread-count="5" name="RequiredScreen(failed)">
+  <test thread-count="5" name="Test(failed)">
     <classes>
       <class name="com.dwp.qa.test.LoginPageTest">
         <methods>
           <include name="setUp"/>
-          <include name="submit"/>
+          <include name="itemNumberSearch" invocation-numbers="0"/>
         </methods>
       </class> <!-- com.dwp.qa.test.LoginPageTest -->
     </classes>
-  </test> <!-- RequiredScreen(failed) -->
+  </test> <!-- Test(failed) -->
 </suite> <!-- Failed suite [Dimensionsweightsandpackages] -->

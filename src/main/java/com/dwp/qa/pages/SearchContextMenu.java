@@ -1,3 +1,4 @@
+//View,Expire,Delete,Show Actual DWP,Copy to New DWP
 package com.dwp.qa.pages;
 
 import java.io.IOException;
@@ -5,9 +6,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.List;
+import java.util.NoSuchElementException;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -22,12 +27,13 @@ import sun.net.www.protocol.http.HttpURLConnection;
 public class SearchContextMenu extends RequiredScreen {
 	public WebDriver driver;
 	private SearchResults searchResults1;
-
+	
 	public SearchContextMenu(WebDriver driver) {
 		super(driver);
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
 		searchResults1=new SearchResults(driver);
+		
 	}
 
 	@FindBy(xpath = "//button[normalize-space()='View']")
@@ -69,6 +75,12 @@ public class SearchContextMenu extends RequiredScreen {
 	WebElement reductionLenth;
 	@FindBy(id = "cpReductionDiameter")
 	WebElement reductionDiameter;
+	@FindBy(id = "cpLengthInfoEdit1")
+	WebElement cpLength;
+	@FindBy(id = "cpWidthInfoEdit1")
+	WebElement cpWidth;
+	@FindBy(id = "cpHeightInfoEdit1")
+	WebElement cpHeight;
 	@FindBy(xpath = "//div[normalize-space()='DWP is valid. Save / Submit can be performed.']")
 	WebElement successMessage;
 	@FindBy(id = "submitRequiredDWP")
@@ -95,7 +107,7 @@ public class SearchContextMenu extends RequiredScreen {
 	WebElement searchMultiCreateItemNumber;
 	@FindBy(id = "btnMultiCreateSearch")
 	WebElement submitButton;
-	@FindBy(xpath = "(//input[@type='checkbox'])[6]|(//input[@type='checkbox'])[7]")
+	@FindBy(xpath = "(//input[@type='checkbox'])[20]|(//input[@type='checkbox'])[21]")
 	List<WebElement> multiCreateCheckboxs;
 	@FindBy(id = "btnMultiCreate")
 	WebElement createButton;
@@ -105,12 +117,24 @@ public class SearchContextMenu extends RequiredScreen {
 	WebElement multiupdatePANumber;
 	@FindBy(id="btnMultiUpdateSearch")
 	WebElement multiUpdateSearch;
-	@FindBy(xpath="(//input[@type='checkbox'])[8]|(//input[@type='checkbox'])[9]|(//input[@type='checkbox'])[10]")
+	@FindBy(xpath="(//input[@type='checkbox'])[18]|(//input[@type='checkbox'])[19]|(//input[@type='checkbox'])[20]")
 	List<WebElement> multiUpdateCheckboxs;
 	@FindBy(id="btnMultiUpdateAll")
 	WebElement updateAllAttributes;
 	@FindBy(xpath = "//div[@id='MSG69']")
 	WebElement Message1;
+	@FindBy(id="reqSpecifyUpdateReasonInfoEdit")
+	WebElement reqSpecifyUpdateReason;
+	@FindBy(id="btnProceedSubmitUpdateReason")
+	WebElement proceesSubmitUpdateReason;
+	@FindBy(id = "ulHeightInfoEdit")
+	WebElement ulHeight;
+	@FindBy(xpath="//div[@class='modal-content']")
+	WebElement errorPOPUP;
+	@FindBy(xpath="//i[@class='fa fa-bell faa-ring fa-2x']")
+	WebElement notification;
+	@FindBy(id="notificationBadgeCount")
+	List<WebElement> badgeCont;
 
 	public void openContextMenu(String itemnumber) {
 		ItemNumberSearch.sendKeys(itemnumber);
@@ -127,21 +151,48 @@ public class SearchContextMenu extends RequiredScreen {
 		Viewbutton.click();
 	}
 
-	public void openCopyNewDWP(String itemnumber, String requirement) {
+	public void openCopyNewDWP(String itemnumber, String requirement) throws InterruptedException {
+		JSONObject outputJson = new JSONObject();
 		ItemNumberSearch.sendKeys(itemnumber);
+		Thread.sleep(2000);
 		SearchRequiredDWP.click();
 		Actions a = new Actions(driver);
 		a.contextClick(OpenRecord).build().perform();
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.until(ExpectedConditions.elementToBeClickable(copyNewDWP));
 		copyNewDWP.click();
 		detailBurgerMenu.click();
 		validateReqDWP.click();
-		alertMessage.click();
-		String ValidationMessage = errorMessage.getText();
-		System.out.println("Validation Message: " + ValidationMessage);
-		String ValidationMessage1 = messagePane.getText();
-		System.out.println("Validation Message: " + ValidationMessage1);
+		System.out.println("Clicked on validateReqDWP");
+		 boolean errorMessageVisible = false;
+	        try {
+	            wait.until(ExpectedConditions.visibilityOf(errorMessage));
+	            errorMessageVisible = true;
+	            System.out.println("Error message is visible.");
+	        } catch (TimeoutException e) {
+	            System.out.println("Error message not visible within the timeout period.");
+	        }
+	        
+	        if (errorMessageVisible && isErrorMessageDisplayed())  {
+        	System.out.println("Error message displayed");
+            
+            wait.until(ExpectedConditions.visibilityOf(errorMessage));
+            String message = errorMessage.getText();
+            outputJson.put("errorMessage", message);
+
+            okButton.click();
+            wait.until(ExpectedConditions.visibilityOf(badgeCont.get(0)));
+            for (WebElement badge : badgeCont) {
+                System.out.println("Badge count: " + badge.getText());
+            }
+
+            wait.until(ExpectedConditions.visibilityOf(messagePane));
+            String validationMessage1 = messagePane.getText();
+            JSONArray validationMessages = new JSONArray();
+            for (String line : validationMessage1.split("\n")) {
+                validationMessages.put(line.trim());
+            }
+            outputJson.put("validationMessages", validationMessages);
 		fullFilment.click();
 		WebElement option = fullFilment.findElement(By.xpath("//li[text()='" + requirement + "']"));
 		option.click();
@@ -166,19 +217,31 @@ public class SearchContextMenu extends RequiredScreen {
 		wait1.until(ExpectedConditions.elementToBeClickable(cpCavityInfo));
 		Select dropdown3 = new Select(cpCavityInfo);
 		dropdown3.selectByIndex(2);
+		cpLength.clear();
+		cpLength.sendKeys("150");
+		cpWidth.clear();
+		cpWidth.sendKeys("140");
+		cpHeight.clear();
+		cpHeight.sendKeys("100");
 		AllcpVisible.click();
 		Select dropdown4 = new Select(AllcpVisible);
 		dropdown4.selectByIndex(1);
 		allcpInSameDirection.click();
 		Select dropdown5 = new Select(allcpInSameDirection);
 		dropdown5.selectByIndex(1);
+		ulHeight.clear();
+		ulHeight.sendKeys("200");
 		detailBurgerMenu.click();
 		validateReqDWP.click();
-		String success = successMessage.getText();
-
-		System.out.println("Success Message: " + success);
-		detailBurgerMenu.click();
-		submitReqDWP.click();
+		wait.until(ExpectedConditions.visibilityOf(successMessage));
+        String validationMessage = successMessage.getText();
+        outputJson.put("validMessage", validationMessage);
+        WebElement detailBurgerMenuElement = driver.findElement(By.cssSelector("i.fa.fa-th-list.fa-2x"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", detailBurgerMenuElement);
+        wait.until(ExpectedConditions.elementToBeClickable(submitReqDWP)).click();
+		wait.until(ExpectedConditions.elementToBeClickable(reqSpecifyUpdateReason)).click();
+        searchResults1.selectDropdownOption(reqSpecifyUpdateReason, 2);
+        wait.until(ExpectedConditions.elementToBeClickable(proceesSubmitUpdateReason)).click();
 		WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(20));
 		WebElement submitSuccessMessage = wait2.until(ExpectedConditions
 				.visibilityOfElementLocated(By.xpath("//div[contains(text(), 'DWP submitted successfully')]")));
@@ -186,6 +249,32 @@ public class SearchContextMenu extends RequiredScreen {
 		String successmessage = submitSuccessMessage.getText();
 		System.out.println("Success:" + successmessage);
 		submitOkButton.click();
+		}
+		else
+		{
+			System.out.println("No error message displayed. Proceeding with further actions.");
+            searchResults1.selectDropdownOption(productVisible, 2);
+            WebElement detailBurgerMenu = driver.findElement(By.cssSelector("i.fa.fa-th-list.fa-2x"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", detailBurgerMenu);
+            wait.until(ExpectedConditions.elementToBeClickable(submitReqDWP)).click();
+            wait.until(ExpectedConditions.elementToBeClickable(reqSpecifyUpdateReason)).click();
+            searchResults1.selectDropdownOption(reqSpecifyUpdateReason, 2);
+            wait.until(ExpectedConditions.elementToBeClickable(proceesSubmitUpdateReason)).click();
+    		WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(20));
+    		WebElement submitSuccessMessage = wait2.until(ExpectedConditions
+    				.visibilityOfElementLocated(By.xpath("//div[contains(text(), 'DWP submitted successfully')]")));
+    		;
+    		String successmessage = submitSuccessMessage.getText();
+    		System.out.println("Success:" + successmessage);
+    		submitOkButton.click();
+		}
+	}
+	private boolean isErrorMessageDisplayed() {
+	    try {
+	        return errorMessage.isDisplayed();
+	    } catch (NoSuchElementException e) {
+	        return false;
+	    }
 	}
 
 	public void expiredContextMenuSearch(String itemnumber) {
@@ -261,208 +350,5 @@ public class SearchContextMenu extends RequiredScreen {
 		}
 	}
 
-	public void multiCreateSerach(String itemnumber) {
-		ItemNumberSearch.sendKeys(itemnumber);
-		SearchRequiredDWP.click();
-		OpenRecord.click();
-
-		AllcpVisible.click();
-		Select basedropdown = new Select(AllcpVisible);
-		WebElement initialOption = basedropdown.getFirstSelectedOption();
-		basedropdown.selectByIndex(2);
-		WebElement selectedOption = basedropdown.getFirstSelectedOption();
-		if (initialOption.getText().equals(selectedOption.getText())) {
-			detailBurgerMenu.click();
-			submitReqDWP.click();
-		    // selectByIndex(1) did not change the selected option
-		    Notification.click();
-		    String validationMessage = Message1.getText();
-		    System.out.println("Validation Message: " + validationMessage);
-		}
-		else
-		{
-		String baseselectedOption = selectedOption.getText();
-		
-		System.out.println("Selected Text: " + baseselectedOption);
-
-		detailBurgerMenu.click();
-		submitReqDWP.click();
-		
-		WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(20));
-		WebElement submitSuccessMessage = wait2.until(ExpectedConditions
-				.visibilityOfElementLocated(By.xpath("//div[contains(text(), 'DWP submitted successfully')]")));
-		;
-		String successmessage = submitSuccessMessage.getText();
-		System.out.println("Success:" + successmessage);
-		submitOkButton.click();
-		WebElement searchpane = driver.findElement(By.xpath("//i[@class='chevron fa fa-fw col-lg-1']"));
-		searchpane.click();
-
-		wait2.until(ExpectedConditions.elementToBeClickable(ItemNumberSearch));
-		ItemNumberSearch.clear();
-		ItemNumberSearch.sendKeys(itemnumber);
-		SearchRequiredDWP.click();
-		Actions a = new Actions(driver);
-
-		wait2.until(ExpectedConditions.elementToBeClickable(OpenRecord));
-		a.contextClick(OpenRecord).build().perform();
-		multiCreateButton.click();
-		searchMultiCreateItemNumber.sendKeys("*03*");
-
-		submitButton.click();
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-		List<WebElement> rows = wait.until(ExpectedConditions
-				.visibilityOfAllElementsLocatedBy(By.xpath("//table[@id='multiCreateSearchResults']/tbody/tr")));
-		int rowCount = rows.size();
-		System.out.println("Total number of rows: " + rowCount);
-		for (WebElement multiCreateCheckbox : multiCreateCheckboxs) {
-			WebDriverWait wait1 = new WebDriverWait(driver, Duration.ofSeconds(30));
-			wait1.until(ExpectedConditions.elementToBeClickable(multiCreateCheckbox));
-			multiCreateCheckbox.click();
-			WebElement selectedDWPs = driver.findElement(By.id("sel1"));
-			selectedDWPs.click();
-			Select dropdown = new Select(selectedDWPs);
-			dropdown.selectByIndex(2);
-			System.out.println(dropdown.getFirstSelectedOption().getText());
-
-		}
-		createButton.click();
-		WebDriverWait wait1 = new WebDriverWait(driver, Duration.ofSeconds(30));
-		List<WebElement> rows1 = wait1.until(ExpectedConditions
-				.visibilityOfAllElementsLocatedBy(By.xpath("//table[@id='multiCreateResults']/tbody/tr")));
-		int rowCount1 = rows1.size();
-		System.out.println("Total number of rows: " + rowCount1);
-		
-		WebElement copyNumber = driver.findElement(By.xpath(
-				"(//td[translate(normalize-space(), '0123456789', '0000000000') = '00000000'])[4]"));
-		String itemNumber = copyNumber.getText();
-		WebElement closeButton = driver.findElement(By.xpath("//button[@title='Close']"));
-		closeButton.click();
-		searchpane.click();
-		ItemNumberSearch.clear();
-		ItemNumberSearch.sendKeys(itemNumber);
-		SearchRequiredDWP.click();
-		wait2.until(ExpectedConditions.elementToBeClickable(OpenRecord));
-		OpenRecord.click();
-		Select targetDropdown = new Select(AllcpVisible);
-		WebElement selectedOption1 = targetDropdown.getFirstSelectedOption();
-		String targetselectedOption = selectedOption1.getText();
-		System.out.println("Selected Text: " + targetselectedOption);
-		if (baseselectedOption.equals(targetselectedOption)) {
-			System.out.println("Values in the base record and target record are the same: " + baseselectedOption);
-		} else {
-			System.out.println("Values in the base record and target record are different.");
-			System.out.println("Base Record Value: " + baseselectedOption);
-			System.out.println("Target Record Value: " + targetselectedOption);
-		}
-		}
-	}
-
-	
-	public void mulitUpdateSearch(String itemnumber)
-	{
-		try
-		{
-		ItemNumberSearch.sendKeys(itemnumber);
-		SearchRequiredDWP.click();
-		OpenRecord.click();
-		productCovered.click();
-		Select basedrop1 = new Select(productCovered);
-		WebElement initialOption1 = basedrop1.getFirstSelectedOption();
-		basedrop1.selectByIndex(1);
-		String basevalue1 = basedrop1.getFirstSelectedOption().getText();
-		productVisible.click();
-		Select basedown2 = new Select(productVisible);
-		WebElement initialOption2 = basedown2.getFirstSelectedOption();
-		basedown2.selectByIndex(1);
-		String basevalue2 = basedown2.getFirstSelectedOption().getText();
-		if(initialOption1.getText().equals(basevalue1)||initialOption2.getText().equals(basevalue2) )
-		{
-			detailBurgerMenu.click();
-			submitReqDWP.click();
-		    // selectByIndex(1) did not change the selected option
-		    Notification.click();
-		    String validationMessage = Message1.getText();
-		    System.out.println("Validation Message: " + validationMessage);
-		}
-		else
-		{
-		detailBurgerMenu.click();
-		submitReqDWP.click();
-		WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(20));
-		WebElement submitSuccessMessage = wait2.until(ExpectedConditions
-				.visibilityOfElementLocated(By.xpath("//div[contains(text(), 'DWP submitted successfully')]")));
-		;
-		String successmessage = submitSuccessMessage.getText();
-		System.out.println("Success:" + successmessage);
-		submitOkButton.click();
-		WebElement searchpane = driver.findElement(By.xpath("//i[@class='chevron fa fa-fw col-lg-1']"));
-		searchpane.click();
-
-		wait2.until(ExpectedConditions.elementToBeClickable(ItemNumberSearch));
-		ItemNumberSearch.clear();
-		ItemNumberSearch.sendKeys(itemnumber);
-		SearchRequiredDWP.click();
-		Actions a = new Actions(driver);
-
-		wait2.until(ExpectedConditions.elementToBeClickable(OpenRecord));
-		a.contextClick(OpenRecord).build().perform();
-		searchMultiUpdate.click();
-		multiupdatePANumber.sendKeys("1122");
-		multiUpdateSearch.click();
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-		List<WebElement> rows = wait.until(ExpectedConditions
-				.visibilityOfAllElementsLocatedBy(By.xpath("//table[@id='multiUpdateSearchResults']/tbody/tr")));
-		int rowCount = rows.size();
-		System.out.println("Total number of rows: " + rowCount);
-		for(WebElement multiUpdateCheckbox:multiUpdateCheckboxs)
-		{
-			WebDriverWait wait1 = new WebDriverWait(driver, Duration.ofSeconds(30));
-			wait1.until(ExpectedConditions.elementToBeClickable(multiUpdateCheckbox));
-			multiUpdateCheckbox.click();
-			
-		}
-		updateAllAttributes.click();
-		List<WebElement> rows1 = wait.until(ExpectedConditions
-				.visibilityOfAllElementsLocatedBy(By.xpath("//table[@id='multiUpdateResults']/tbody/tr")));
-		int rowCount1 = rows1.size();
-		System.out.println("Total number of rows: " + rowCount1);
-		WebElement copyNumber = driver.findElement(By.xpath(
-				"(//td[translate(normalize-space(), '0123456789', '0000000000') = '00000000'])[6]"));
-		String ItemNumber = copyNumber.getText();
-		WebElement closeButton = driver.findElement(By.xpath("//button[@title='Close']"));
-
-		closeButton.click();
-		searchpane.click();
-		ItemNumberSearch.clear();
-		ItemNumberSearch.sendKeys(ItemNumber);
-		SearchRequiredDWP.click();
-		wait2.until(ExpectedConditions.elementToBeClickable(OpenRecord));
-		OpenRecord.click();
-		Select targetdrop1 = new Select(productCovered);
-		String targetvalue1 = targetdrop1.getFirstSelectedOption().getText();
-		Select targetdrop2 = new Select(productVisible);
-		String targetvalue2 = targetdrop2.getFirstSelectedOption().getText();
-		
-		if(basevalue1.equals(targetvalue1) && basevalue2.equals(targetvalue2))
-		{
-			System.out.println("Dropdown values are the same for both base and target records.");
-		}
-		else
-		{
-			System.out.println("Dropdown values are different for base and target records.");
-		}
-		}
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		
-		
-	}
-	}
-
-
-	
+}
 

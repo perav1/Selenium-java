@@ -1,11 +1,21 @@
+
 package com.dwp.qa.test;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
@@ -14,55 +24,80 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.dwp.qa.BaseTest.BaseClass;
+import com.dwp.qa.pages.DetailPane;
 import com.dwp.qa.pages.LoginPage;
+import com.dwp.qa.pages.MultiCreate;
+import com.dwp.qa.pages.MultiUpdate;
 import com.dwp.qa.pages.RequiredScreen;
 import com.dwp.qa.pages.SearchBurgerMenu;
 import com.dwp.qa.pages.SearchContextMenu;
 import com.dwp.qa.pages.SearchResults;
+import com.dwp.qa.util.ExcelDataDriven;
 
 
 public class LoginPageTest<object> extends BaseClass {
 
+	
 	private RequiredScreen screen;
 	private SearchContextMenu scontextmenu;
 	private SearchBurgerMenu sburgermenu;
 	private SearchResults sresults;
+	public DetailPane detailresult;
+	private MultiCreate create;
+	private MultiUpdate update;
+	private LoginPage page;
+	DataFormatter formatter=new DataFormatter();
 
 	@BeforeMethod
 	public void setUp() {
+		
 		screen = new RequiredScreen(driver);
 		scontextmenu = new SearchContextMenu(driver);
 		sburgermenu = new SearchBurgerMenu(driver);
+		detailresult=new DetailPane(driver);
+		create=new MultiCreate(driver);
+		update=new MultiUpdate(driver);
+		page = new LoginPage(driver, prop);
 	}
 
 	@Test
-	public void submit() {
-		LoginPage page = LaunchAppication();
-		page.LoginApplication("penagani.ravali@inter.ikea.com");
-		page.loginDetails("ikeadt\\testdwp", "Testing8");
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-		RequiredScreen screen = new RequiredScreen(driver);
-		screen.RequiredScreenLogin();
+	public void submit() throws InterruptedException {
+		
+		LoginPage page = launchApplication();
+		
+		page.LoginApplication("email");
+		Thread.sleep(2000);
+        page.loginDetails("username", "password");
+		
+	
 
 	}
+	@Test
+	public void requiredLoginPage() throws InterruptedException
+	{
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+		 Thread.sleep(2000);
+		screen.RequiredScreenLogin();
+	}
 	
-	@Test(dataProvider="ItemNameTest")
-	public void ItemNameSearch(String name) {
+	@Test(dataProvider="itemNameTest")
+	public void itemNameSearch(String name) {
 
 		screen.ItemName(name);
 	}
 
 	@DataProvider
-	public Object[][] ItemNameTest() {
+	public Object[][] itemNameTest() {
 		return new Object[][] { { "12" }, { "BÄSTIS hook beige" } };
 	}
 
-	@Test
-	public void itemNumberSearch() {
-
-		int itemCount1 = screen.searchWithItemNumber("30460566");
-		System.out.println("Number of search results for item number '30460566': " + itemCount1);
-		Assert.assertNotEquals(itemCount1, 0, "No search results found for item number '30460566'");
+	@Test(dataProvider="driverTest",dataProviderClass = ExcelDataDriven.class)
+	public void itemNumberSearch(String itemnumber) {
+		//driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+	    int itemCount1 = screen.searchWithItemNumber(itemnumber); // Pass the actual itemNumber variable
+	    System.out.println("Number of search results for item number 'itemnumber': " + itemCount1);
+		Assert.assertNotEquals(itemCount1, 0, "No search results found for item number 'itemnumber'");
+	
 
 		// int itemCount2 = screen.searchWithItemNumber("*03*");
 		// System.out.println("Number of search results for wildcard '*03*': " +
@@ -75,6 +110,7 @@ public class LoginPageTest<object> extends BaseClass {
 	public void searchDialogBox() {
 
 		int itemCount2 = screen.searchItemNumberBook("*g*");
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
 		System.out.println("Number of search results for item number : " + itemCount2);
 		Assert.assertNotEquals(itemCount2, 0, "No search results found for item number '*g*'");
 
@@ -93,11 +129,11 @@ public class LoginPageTest<object> extends BaseClass {
 		screen.homeFurnishingBusiness();
 	}
 
-	@Test
-	public void productArea() {
-
+	@Test(dataProvider="productData",dataProviderClass = ExcelDataDriven.class)
+	public void productArea(String itemnumber, String paNumber) {
+                    
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
-		screen.productAreaNumber("1031", "00018118");
+		 screen.productAreaNumber(paNumber, itemnumber);
 	}
 
 	@Test
@@ -165,10 +201,10 @@ public class LoginPageTest<object> extends BaseClass {
 		scontextmenu.openViewMode("30460566");
 	}
 
-	@Test
-	public void copyNewDWP() {
+	@Test(dataProvider="copyData",dataProviderClass = ExcelDataDriven.class)
+	public void copyNewDWP(String itemnumber,String requirement) throws InterruptedException {
 
-		scontextmenu.openCopyNewDWP("60158771", "Centrally fulfilled");
+		scontextmenu.openCopyNewDWP(itemnumber, requirement);
 	}
 
 	@Test
@@ -190,20 +226,20 @@ public class LoginPageTest<object> extends BaseClass {
 	}
 
 	@Test
-	public void multiCreate() {
-
-		scontextmenu.multiCreateSerach("30460566");
+	public void multiCreate() throws InterruptedException {
+		
+		create.multiCreateSearch("30460566");
 	}
 
 	@Test
 	public void multiUpdate() {
-		scontextmenu.mulitUpdateSearch("30460566");
+		update.multiUpdateSearch("30460566");
 	}
 
-	@Test
-	public void newBlankSearch() {
+	@Test(dataProvider="newData",dataProviderClass = ExcelDataDriven.class)
+	public void newBlankSearch(String itemnumber,String requirement) {
 
-		sburgermenu.openNewBlankDWP("90101957", "Store fulfilled");
+		sburgermenu.openNewBlankDWP(itemnumber, requirement);
 	}
 
 	@Test
@@ -214,5 +250,13 @@ public class LoginPageTest<object> extends BaseClass {
 
 	}
 
+     
+     
+     @Test(dependsOnMethods= {"submit","requiredLoginPage"})
+     public void checkExistingRecord()
+     {
+    	 detailresult.checkRecord("30460566","Centrally fulfilled");//30460566,00125260
+     }
+	}
 	
-}
+

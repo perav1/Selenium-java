@@ -1,3 +1,4 @@
+//New blank DWP functionality,find change request
 package com.dwp.qa.pages;
 
 import java.time.Duration;
@@ -132,6 +133,10 @@ public class SearchBurgerMenu extends SearchContextMenu {
 	WebElement chenageRequestCrId;
 	@FindBy(xpath="//input[@id='changeRequestSearchBy' and @value='ItemNo']")
 	WebElement changeRequestItem;
+	@FindBy(id="reqSpecifyUpdateReasonInfoEdit")
+	WebElement reqSpecifyUpdateReason;
+	@FindBy(id="btnProceedSubmitUpdateReason")
+	WebElement proceesSubmitUpdateReason;
 
 	public void openNewBlankDWP(String itemnumber, String requirement) {
 		try {
@@ -155,7 +160,7 @@ public class SearchBurgerMenu extends SearchContextMenu {
 			saledropdown.selectByIndex(1);
 			cpPackagingMaterial.click();
 			Select cppackaging = new Select(cpPackagingMaterial);
-			cppackaging.selectByIndex(2);
+			cppackaging.selectByIndex(1);
 			productCovered.click();
 			Select productcovered = new Select(productCovered);
 			productcovered.selectByIndex(1);
@@ -301,7 +306,10 @@ public class SearchBurgerMenu extends SearchContextMenu {
 			WebElement detailBurgerMenu = driver.findElement(By.cssSelector("i.fa.fa-th-list.fa-2x"));
 			((JavascriptExecutor) driver).executeScript("arguments[0].click();", detailBurgerMenu);
 			submitReqDWP.click();
-			warningOk.click();
+			wait.until(ExpectedConditions.elementToBeClickable(reqSpecifyUpdateReason)).click();
+	        searchResults1.selectDropdownOption(reqSpecifyUpdateReason, 2);
+	        wait.until(ExpectedConditions.elementToBeClickable(proceesSubmitUpdateReason)).click();
+			//warningOk.click();
 			WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(20));
 			WebElement submitSuccessMessage = wait2.until(ExpectedConditions
 					.visibilityOfElementLocated(By.xpath("//div[contains(text(), 'DWP submitted successfully')]")));
@@ -328,8 +336,12 @@ public class SearchBurgerMenu extends SearchContextMenu {
 			WebElement detailBurgerMenu = driver.findElement(By.cssSelector("i.fa.fa-th-list.fa-2x"));
 			((JavascriptExecutor) driver).executeScript("arguments[0].click();", detailBurgerMenu);
 			submitReqDWP.click();
-			warningOk.click();
 			WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(20));
+			wait2.until(ExpectedConditions.elementToBeClickable(reqSpecifyUpdateReason)).click();
+	        searchResults1.selectDropdownOption(reqSpecifyUpdateReason, 2);
+	        wait2.until(ExpectedConditions.elementToBeClickable(proceesSubmitUpdateReason)).click();
+			//warningOk.click();
+			
 			WebElement submitSuccessMessage = wait2.until(ExpectedConditions
 					.visibilityOfElementLocated(By.xpath("//div[contains(text(), 'DWP submitted successfully')]")));
 			;

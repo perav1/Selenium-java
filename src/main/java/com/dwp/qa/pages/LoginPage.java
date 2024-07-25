@@ -1,15 +1,19 @@
 package com.dwp.qa.pages;
+import java.util.Properties;
 
+//login functionality
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 public class LoginPage {
-	WebDriver driver;
-	public LoginPage(WebDriver driver)
+	public WebDriver driver;
+	public Properties prop;
+	public LoginPage(WebDriver driver,Properties prop)
 	{
 		this.driver=driver;
+		this.prop=prop;
 		PageFactory.initElements(driver, this);
 	}
 	@FindBy(id="username")
@@ -26,24 +30,23 @@ public class LoginPage {
 	
 	
 	
-	public void LoginApplication(String email)
-	{
-		Useremail.sendKeys(email);
-		submit.click();
-		
-		
-	}
-	public void loginDetails(String username,String password)
-	{
-		userName.sendKeys(username);
-		Password.sendKeys(password);
-		signIn.click();
-		
-	}
-	
-	public void goTo()
-	{
-		driver.get("https://cfnew.www.supplychain-dwp.ikeadt.com/");
-	}
+	public void LoginApplication(String email) {
+        System.out.println("Logging in with email: " + email);
+        Useremail.sendKeys(prop.getProperty("email"));
+        submit.click();
+    }
 
+    public void loginDetails(String username, String password) {
+        System.out.println("Logging in with username: " + username + " and password: " + password);
+        userName.sendKeys(prop.getProperty("username"));
+        Password.sendKeys(prop.getProperty("password"));
+        signIn.click();
+    }
+
+    public void goTo() {
+        String url = prop.getProperty("URL");
+        System.out.println("Navigating to URL: " + url);
+        driver.get(url);
+    }
 }
+    

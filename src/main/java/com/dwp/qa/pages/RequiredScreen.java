@@ -1,3 +1,4 @@
+//search pane eg:item name,item number,HFB and PA...etc
 package com.dwp.qa.pages;
 
 import org.openqa.selenium.WebDriver;
@@ -27,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.text.html.HTMLDocument.Iterator;
 
-import org.bouncycastle.util.Selector;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -114,6 +114,10 @@ public class RequiredScreen {
 	WebElement packagingRequirementVReqSearch;
 	@FindBy(id = "packagingSolutionPSMIDReqSearch")
 	WebElement packagingSolutionPSMIDReqSearch;
+	@FindBy(xpath = "//button[normalize-space()='OK']")
+	WebElement warningOk;
+	@FindBy(xpath = "//i[@class='chevron fa fa-fw col-lg-1']")
+	WebElement searchPane;
 
 	public void RequiredScreenLogin() {
 
@@ -150,23 +154,30 @@ public class RequiredScreen {
 	}
 
 	public int searchWithItemNumber(String itemnumber) {
+
 		try {
+
 			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
 			wait.until(ExpectedConditions.elementToBeClickable(By.id("itemNumberReqSearch")));
+
+			if (ItemNumberSearch == null || SearchRequiredDWP == null || OpenRecord == null) {
+				throw new IllegalStateException("One or more web elements are not initialized.");
+			}
+
 			ItemNumberSearch.clear();
-
 			ItemNumberSearch.sendKeys(itemnumber);
+			Thread.sleep(2000);
+
 			SearchRequiredDWP.click();
-			OpenRecord.click();
+			wait.until(ExpectedConditions.elementToBeClickable(OpenRecord)).click();
 
-			WebDriverWait wait1 = new WebDriverWait(driver, Duration.ofSeconds(20));
-			wait1.until(ExpectedConditions.visibilityOfElementLocated(By.id("requiredSearchResults")));
 			return searchResults1.getItemTotalRecords();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		return 0;
+
 	}
 
 	public int searchItemNumberBook(String itemname) {

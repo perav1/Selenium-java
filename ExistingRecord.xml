@@ -8,12 +8,16 @@
 	  
     <classes>
 	<class name="com.dwp.qa.test.LoginPageTest">
+		
 		<methods>
 			<include name="submit"/>
-			<include name="ItemNameSearch"/>
+			<include name="requiredLoginPage"></include>
+			<include name="checkExistingRecord"></include>
+			
+			
 			
 		</methods>
 	</class>
     </classes>
   </test> <!-- Test -->
-</suite> <!-- Suite -->
+</suite> <!-- Suit-->
