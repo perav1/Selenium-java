@@ -15,128 +15,22 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class SearchBurgerMenu extends SearchContextMenu {
+import com.dwp.qa.util.TakeScreenshots;
+
+public class SearchBurgerMenu extends WebLocators {
 	public WebDriver driver;
 	private SearchResults searchResults1;
+	public TakeScreenshots screenshots;
 	public SearchBurgerMenu(WebDriver driver) {
 		super(driver);
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
 		searchResults1=new SearchResults(driver);
+		screenshots = new TakeScreenshots(driver);
+		
 	}
 
-	@FindBy(css = "tbody tr:nth-child(1) td:nth-child(1) input:nth-child(1)")
-	WebElement selectedSearchResults;
-	@FindBy(xpath = "//i[@class='fa fa-th-list']")
-	WebElement searchBurgerMenu;
-	@FindBy(id = "ddlSaleSolutionIndicationInfoEdit")
-	WebElement saleSolution;
-	@FindBy(id = "cpPackagingMaterialInfoEdit1")
-	WebElement cpPackagingMaterial;
-	@FindBy(id = "cpFragileInfoEdit1")
-	WebElement cpFragile;
-	@FindBy(id = "cpCavityInfoEdit1")
-	WebElement cpCavity;
-	@FindBy(id = "cpDustProtectionNeededInfoEdit1")
-	WebElement cpDustProtection;
-	@FindBy(id = "cpServicePackagingInfoEdit1")
-	WebElement cpServicePackaging;
-	@FindBy(id = "cpLengthInfoEdit1")
-	WebElement cpLength;
-	@FindBy(id = "cpWidthInfoEdit1")
-	WebElement cpWidth;
-	@FindBy(id = "cpHeightInfoEdit1")
-	WebElement cpHeight;
-	@FindBy(id = "ddlStoreFacingWidInfoEditCP1")
-	WebElement storeFacingWidth;
-	@FindBy(id = "ddlStoreFacingHeiInfoEditCP1")
-	WebElement storeFacingHeight;
-	@FindBy(id = "cpGrossWeightInfoEdit1")
-	WebElement cpGrossWeight;
-	@FindBy(id = "ulQtyInfoEdit")
-	WebElement ulQty;
-	@FindBy(id = "mpQtyInfoEdit")
-	WebElement mpQty;
-	@FindBy(id = "ddlMPSalesSolutionIndicationInfoEdit")
-	WebElement mpSalesSolutionIndication;
-	@FindBy(id = "ddlMPSuitableForSideLengthFillingInfoEdit")
-	WebElement mpSuitableForSideLength;
-	@FindBy(id = "mpLenInfoEdit")
-	WebElement mpLength;
-	@FindBy(id = "mpWidInfoEdit")
-	WebElement mpWidth;
-	@FindBy(id = "mpHeiInfoEdit")
-	WebElement mpHeight;
-	@FindBy(id = "pmpReqAdd")
-	WebElement partAdd;
-	@FindBy(xpath = "//div[@data-target='#multiPack']")
-	WebElement mpPanelHeading;
-	@FindBy(id = "reqPartIDInfoEdit")
-	WebElement partId;
-	@FindBy(id = "reqPartNameInfoEdit")
-	WebElement partName;
-	@FindBy(id = "reqPartQtyInfoEdit")
-	WebElement partQty;
-	@FindBy(id = "reqPartWgtInfoEdit")
-	WebElement partWeight;
-	@FindBy(id = "btnNext1")
-	WebElement nextButton;
-	@FindBy(id = "reqPMMatInfoPMType")
-	WebElement packagingMaterial;
-	@FindBy(id = "reqPMMatRecycledMaterialShare")
-	WebElement recycleMaterialShare;
-	@FindBy(xpath = "//button[@id='reqPMNextMatInfoBtn']")
-	WebElement materialNextButton;
-	@FindBy(xpath = "//button[normalize-space()='OK']")
-	WebElement clickOk;
-	@FindBy(id = "ulStakingIndicationInfoEdit")
-	WebElement stakingIndication;
-	@FindBy(id = "ulSutableforTopFillInfoEdit")
-	WebElement sutableTopFilling;
-	@FindBy(id = "ulSalesolutionindicationInfoEdit")
-	WebElement ulSaleSolution;
-	@FindBy(id = "ulFireclassInfoEdit")
-	WebElement ulFireClass;
-	@FindBy(id = "ulLengthInfoEdit")
-	WebElement ulLength;
-	@FindBy(id = "ulWidthInfoEdit")
-	WebElement ulWidth;
-	@FindBy(id = "ulHeightInfoEdit")
-	WebElement ulHeight;
-	@FindBy(id = "ulStoreFacingInfoEditWid1")
-	WebElement ulstoreFacing;
-	@FindBy(id = "unitLoadCategory")
-	WebElement unitLoadCategory;
-	@FindBy(id = "saveRequiredDWP")
-	WebElement saveRequiredDWP;
-	@FindBy(xpath = "//div[contains(text(), 'DWP saved successfully')]")
-	WebElement successSave;
-	@FindBy(xpath = "//body[1]/div[2]/div[1]/div[2]/div[1]/div[2]/div[1]/table[1]/tbody[1]/tr[1]/td[7]")
-	WebElement getStatus;
-	@FindBy(css = "button[class='btn pull-left ok-btn btn-warning']")
-	WebElement warningOk;
-	@FindBy(id = "packagingRequirementInfoEdit")
-	WebElement packagingRequirement;
-	@FindBy(id = "findChangeRequestReqDWP")
-	WebElement findChangeRequest;
-	@FindBy(id = "searchValue")
-	WebElement searchwithCR;
-	@FindBy(id = "searchChangeRequestBtn")
-	WebElement searchChangeRequest;
-	@FindBy(xpath = "//input[@id='changeRequestSearchType' and @value='Smart']")
-	WebElement smartChangeRequest;
-	@FindBy(xpath = "//input[@id='changeRequestSearchType' and @value='Exact']")
-	WebElement exactChangeRequest;
-	@FindBy(xpath = "//table[@id='tblFindCRResult']/tbody/tr ")
-	List<WebElement> findCRResult;
-	@FindBy(xpath="//input[@id='changeRequestSearchBy' and @value='CrId']")
-	WebElement chenageRequestCrId;
-	@FindBy(xpath="//input[@id='changeRequestSearchBy' and @value='ItemNo']")
-	WebElement changeRequestItem;
-	@FindBy(id="reqSpecifyUpdateReasonInfoEdit")
-	WebElement reqSpecifyUpdateReason;
-	@FindBy(id="btnProceedSubmitUpdateReason")
-	WebElement proceesSubmitUpdateReason;
+	
 
 	public void openNewBlankDWP(String itemnumber, String requirement) {
 		try {
@@ -145,11 +39,13 @@ public class SearchBurgerMenu extends SearchContextMenu {
 			SearchRequiredDWP.click();
 			selectedSearchResults.click();
 			searchBurgerMenu.click();
+			screenshots.takeScreenShots("burgermenu");
 			WebElement newBlankDWP = driver.findElement(By.id("newDWP"));
 			newBlankDWP.click();
 			detailBurgerMenu.click();
 			validateReqDWP.click();
 			alertMessage.click();
+			screenshots.takeScreenShots("alretMessage");
 			String ValidationMessage1 = messagePane.getText();
 			System.out.println("Validation Message: " + ValidationMessage1);
 			fullFilment.click();
@@ -264,12 +160,15 @@ public class SearchBurgerMenu extends SearchContextMenu {
 			String success = successMessage.getText();
 
 			System.out.println("Success Message: " + success);
+			screenshots.takeScreenShots("successmessage");
+			Thread.sleep(2000);
 			performSaveNewblankDWP();
 			performSubmitwithoutPR();
 			performSubmitwithPR();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 	}
 
 	public void performSaveNewblankDWP() {
@@ -279,14 +178,17 @@ public class SearchBurgerMenu extends SearchContextMenu {
 			WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(20));
 			wait2.until(ExpectedConditions.elementToBeClickable(detailBurgerMenu));
 			detailBurgerMenu.click();
+			Thread.sleep(2000);
 			saveRequiredDWP.click();
 			wait2.until(ExpectedConditions.elementToBeClickable(successSave));
 			String successMessage = successSave.getText();
 			System.out.println("Success is:" + successMessage);
 			// wait2.until(ExpectedConditions.elementToBeClickable(clickOk));
 			clickOk.click();
+			Thread.sleep(2000);
 			String saveGetStatus = getStatus.getText();
 			System.out.println("Status:" + saveGetStatus);
+			screenshots.takeScreenShots("DraftStatus");
 			// wait2.until(ExpectedConditions.elementToBeClickable(OpenRecord));
 
 		} catch (Exception e) {
@@ -305,11 +207,12 @@ public class SearchBurgerMenu extends SearchContextMenu {
 			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("loadingContent")));
 			WebElement detailBurgerMenu = driver.findElement(By.cssSelector("i.fa.fa-th-list.fa-2x"));
 			((JavascriptExecutor) driver).executeScript("arguments[0].click();", detailBurgerMenu);
+			Thread.sleep(2000);
 			submitReqDWP.click();
 			wait.until(ExpectedConditions.elementToBeClickable(reqSpecifyUpdateReason)).click();
 	        searchResults1.selectDropdownOption(reqSpecifyUpdateReason, 2);
 	        wait.until(ExpectedConditions.elementToBeClickable(proceesSubmitUpdateReason)).click();
-			//warningOk.click();
+			//warningOk1.click();
 			WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(20));
 			WebElement submitSuccessMessage = wait2.until(ExpectedConditions
 					.visibilityOfElementLocated(By.xpath("//div[contains(text(), 'DWP submitted successfully')]")));
@@ -317,8 +220,10 @@ public class SearchBurgerMenu extends SearchContextMenu {
 			String successmessage = submitSuccessMessage.getText();
 			System.out.println("Success:" + successmessage);
 			submitOkButton.click();
+			Thread.sleep(2000);
 			String saveGetStatus = getStatus.getText();
 			System.out.println("Status:" + saveGetStatus);
+			screenshots.takeScreenShots("Prel status");
 		}
 
 		catch (Exception e) {
@@ -335,6 +240,7 @@ public class SearchBurgerMenu extends SearchContextMenu {
 			pr.selectByIndex(1);
 			WebElement detailBurgerMenu = driver.findElement(By.cssSelector("i.fa.fa-th-list.fa-2x"));
 			((JavascriptExecutor) driver).executeScript("arguments[0].click();", detailBurgerMenu);
+			Thread.sleep(2000);
 			submitReqDWP.click();
 			WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(20));
 			wait2.until(ExpectedConditions.elementToBeClickable(reqSpecifyUpdateReason)).click();
@@ -348,8 +254,10 @@ public class SearchBurgerMenu extends SearchContextMenu {
 			String successmessage = submitSuccessMessage.getText();
 			System.out.println("Success:" + successmessage);
 			submitOkButton.click();
+			Thread.sleep(2000);
 			String saveGetStatus = getStatus.getText();
 			System.out.println("Status:" + saveGetStatus);
+			screenshots.takeScreenShots("submit status");
 
 		} catch (Exception e) {
 			e.printStackTrace();

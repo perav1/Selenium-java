@@ -27,11 +27,13 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class DetailPane extends SearchBurgerMenu {
+import com.dwp.qa.util.TakeScreenshots;
+
+public class DetailPane extends WebLocators {
 	public WebDriver driver;
 	public SearchBurgerMenu searchmenu;
 	public SearchResults searchResults1;
-	
+	public TakeScreenshots screenshots;
 	public DetailPane(WebDriver driver)
 	{
 		super(driver);
@@ -39,39 +41,9 @@ public class DetailPane extends SearchBurgerMenu {
 		PageFactory.initElements(driver, this);
 		searchmenu=new SearchBurgerMenu(driver);
 		searchResults1=new SearchResults(driver);
+		screenshots = new TakeScreenshots(driver);
 	}
-	@FindBy(xpath="//div[@class='modal-body']")
-	WebElement errorMessage1;
-	@FindBy(xpath="//button[normalize-space()='OK']")
-	WebElement okButton;
-	@FindBy(id="notificationBadgeCount")
-	List<WebElement> badgeCont;
-	@FindBy(xpath="//div[@class='modal-content']")
-	WebElement deviationReportPOPUP;
-	@FindBy(xpath="//div[@class='modal-body']")
-	WebElement deviationReportmessage;
-	@FindBy(xpath="//button[normalize-space()='OK']")
-	WebElement okDeviation;
-	@FindBy(id="cpLengthInfoEdit1")
-	WebElement cpLength;
-	@FindBy(xpath="//div[@id='MSG348']")
-	WebElement successValidation;
-	@FindBy(xpath="//div[@class='ui-dialog ui-widget ui-widget-content ui-corner-all ui-front ui-draggable ui-resizable']")
-	WebElement updateReasonspopUP;
-	@FindBy(id="reqSpecifyUpdateReasonInfoEdit")
-	WebElement reqSpecifyUpdateReason;
-	@FindBy(id="btnProceedSubmitUpdateReason")
-	WebElement proceesSubmitUpdateReason;
-	@FindBy(xpath="//div[@class='modal-content']")
-	WebElement changeRequestPOPUP;
-	@FindBy(xpath="//button[normalize-space()='OK']")
-	WebElement changeOKButton;
-	@FindBy(xpath="//div[@class='modal-body']")
-	WebElement changeRequestMesssage;
-	@FindBy(xpath="//i[@class='fa fa-bell faa-ring fa-2x']")
-	WebElement notification;
-	@FindBy(xpath="//div[@class='modal-content']")
-	WebElement errorPOPUP;
+	
 	
 	public void checkRecord(String itemnumber, String requirement) {
 	    JSONObject outputJson = new JSONObject();
@@ -83,6 +55,7 @@ public class DetailPane extends SearchBurgerMenu {
 	        SearchRequiredDWP.click();
 	        OpenRecord.click();
 	        detailBurgerMenu.click();
+	        screenshots.takeScreenShots("DetailBurgerMenu");
 	        validateReqDWP.click();
 	        System.out.println("Clicked on validateReqDWP");
 	        boolean errorMessageVisible = false;
@@ -100,7 +73,7 @@ public class DetailPane extends SearchBurgerMenu {
 	            wait.until(ExpectedConditions.visibilityOf(errorMessage));
 	            String message = errorMessage.getText();
 	            outputJson.put("errorMessage", message);
-
+	            screenshots.takeScreenShots("errormessage");
 	            okButton.click();
 	            wait.until(ExpectedConditions.visibilityOf(badgeCont.get(0)));
 	            for (WebElement badge : badgeCont) {
@@ -141,7 +114,9 @@ public class DetailPane extends SearchBurgerMenu {
 	            WebElement detailBurgerMenuElement = driver.findElement(By.cssSelector("i.fa.fa-th-list.fa-2x"));
 	            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", detailBurgerMenuElement);
 	            wait.until(ExpectedConditions.elementToBeClickable(submitReqDWP)).click();
+	            
 	            handlePopups(outputJson);
+	            screenshots.takeScreenShots("ExistingDWPRecord");
 	        } else {
 	            
 	        	System.out.println("No error message displayed. Proceeding with further actions.");
@@ -149,7 +124,9 @@ public class DetailPane extends SearchBurgerMenu {
 	            WebElement detailBurgerMenuElement = driver.findElement(By.cssSelector("i.fa.fa-th-list.fa-2x"));
 	            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", detailBurgerMenuElement);
 	            wait.until(ExpectedConditions.elementToBeClickable(submitReqDWP)).click();
+	            
 	            handlePopups(outputJson);
+	            screenshots.takeScreenShots("ExistingDWPRecord");
 	        }
 
 	        // Write outputJson to file
@@ -192,6 +169,7 @@ public class DetailPane extends SearchBurgerMenu {
 	public void handleUpdateReason(JSONObject outputJson) {
 	    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 	    try {
+	    	screenshots.takeScreenShots("updateReasonPOPUP");
 	        wait.until(ExpectedConditions.elementToBeClickable(reqSpecifyUpdateReason)).click();
 	        searchResults1.selectDropdownOption(reqSpecifyUpdateReason, 2);
 	        wait.until(ExpectedConditions.elementToBeClickable(proceesSubmitUpdateReason)).click();
@@ -199,6 +177,7 @@ public class DetailPane extends SearchBurgerMenu {
 	                .visibilityOfElementLocated(By.xpath("//div[contains(text(), 'DWP submitted successfully')]")));
 	        String successMessage = submitSuccessMessage.getText();
 	        outputJson.put("successMessage", successMessage);
+	        screenshots.takeScreenShots("successmessage");
 	        wait.until(ExpectedConditions.elementToBeClickable(submitOkButton)).click();
 	    } catch (Exception e) {
 	        e.printStackTrace();

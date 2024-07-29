@@ -1,5 +1,6 @@
 package com.dwp.qa.pages;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 
@@ -16,29 +17,35 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class MultiCreate extends SearchContextMenu
+import com.dwp.qa.util.TakeScreenshots;
+
+public class MultiCreate extends WebLocators
 {
 	private SearchResults searchResults1;
+	public WebDriver driver;
+	public TakeScreenshots screenshots;
 public MultiCreate(WebDriver driver) {
 		super(driver);
 		this.driver=driver;
 		PageFactory.initElements(driver, this);
 		// TODO Auto-generated constructor stub
 		searchResults1=new SearchResults(driver);
+		screenshots = new TakeScreenshots(driver);
 	}
 @FindBy(css = "a[tabindex='13']")
 WebElement clickableLink;
 
-public void multiCreateSearch(String itemnumber) {
+public void multiCreateSearch(String itemnumber) throws IOException {
 	 JSONObject outputJson = new JSONObject();
 	ItemNumberSearch.sendKeys(itemnumber);
+	screenshots.takeScreenShots("itemnumber");
 	SearchRequiredDWP.click();
 	OpenRecord.click();
 
 	AllcpVisible.click();
 	Select basedropdown = new Select(AllcpVisible);
 	WebElement initialOption = basedropdown.getFirstSelectedOption();
-	basedropdown.selectByIndex(1);
+	basedropdown.selectByIndex(2);
 	WebElement selectedOption = basedropdown.getFirstSelectedOption();
 	if (initialOption.getText().equals(selectedOption.getText())) {
 		detailBurgerMenu.click();
@@ -46,6 +53,7 @@ public void multiCreateSearch(String itemnumber) {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 		wait.until(ExpectedConditions.elementToBeClickable(reqSpecifyUpdateReason)).click();
 	    searchResults1.selectDropdownOption(reqSpecifyUpdateReason, 2);
+	    screenshots.takeScreenShots("UpdateReasonPOPUP");
 	    wait.until(ExpectedConditions.elementToBeClickable(proceesSubmitUpdateReason)).click();
 	    // selectByIndex(1) did not change the selected option
 	    Notification.click();
@@ -62,6 +70,7 @@ public void multiCreateSearch(String itemnumber) {
 	submitReqDWP.click();
 	wait2.until(ExpectedConditions.elementToBeClickable(reqSpecifyUpdateReason)).click();
     searchResults1.selectDropdownOption(reqSpecifyUpdateReason, 2);
+    screenshots.takeScreenShots("UpdateReasonPOPUP");
     wait2.until(ExpectedConditions.elementToBeClickable(proceesSubmitUpdateReason)).click();
 	
 	WebElement submitSuccessMessage = wait2.until(ExpectedConditions
@@ -69,6 +78,7 @@ public void multiCreateSearch(String itemnumber) {
 	;
 	String successmessage = submitSuccessMessage.getText();
 	System.out.println("Success:" + successmessage);
+	screenshots.takeScreenShots("successmessage");
 	submitOkButton.click();
 	WebElement searchpane = wait2.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//i[@class='chevron fa fa-fw col-lg-1']")));
 	searchpane.click();
@@ -76,11 +86,13 @@ public void multiCreateSearch(String itemnumber) {
 	wait2.until(ExpectedConditions.elementToBeClickable(ItemNumberSearch));
 	ItemNumberSearch.clear();
 	ItemNumberSearch.sendKeys(itemnumber);
+	screenshots.takeScreenShots("itemnumber");
 	SearchRequiredDWP.click();
 	Actions a = new Actions(driver);
 
 	wait2.until(ExpectedConditions.elementToBeClickable(OpenRecord));
 	a.contextClick(OpenRecord).build().perform();
+	screenshots.takeScreenShots("contextmenu");
 	multiCreateButton.click();
 	searchMultiCreateItemNumber.sendKeys("*03*");
 
@@ -96,6 +108,7 @@ public void multiCreateSearch(String itemnumber) {
 		WebDriverWait wait1 = new WebDriverWait(driver, Duration.ofSeconds(40));
 		wait1.until(ExpectedConditions.elementToBeClickable(multiCreateCheckbox));
 		multiCreateCheckbox.click();
+		screenshots.takeScreenShots("checkboxs");
 		WebElement selectedDWPs = driver.findElement(By.id("sel1"));
 		selectedDWPs.click();
 		Select dropdown = new Select(selectedDWPs);
@@ -114,11 +127,13 @@ public void multiCreateSearch(String itemnumber) {
 			"(//td[translate(normalize-space(), '0123456789', '0000000000') = '00000000'])[4]"));
 	String itemNumber = copyNumber.getText();
 	WebElement closeButton = driver.findElement(By.xpath("//button[@title='Close']"));
+	screenshots.takeScreenShots("targetRecords");
 	closeButton.click();
 	WebElement searchpane1 = wait2.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//i[@class='chevron fa fa-fw col-lg-1']")));
 	searchpane1.click();
 	ItemNumberSearch.clear();
 	ItemNumberSearch.sendKeys(itemNumber);
+	screenshots.takeScreenShots("itemnumber");
 	SearchRequiredDWP.click();
 	wait2.until(ExpectedConditions.elementToBeClickable(OpenRecord));
 	OpenRecord.click();
@@ -126,6 +141,7 @@ public void multiCreateSearch(String itemnumber) {
 	WebElement selectedOption1 = targetDropdown.getFirstSelectedOption();
 	String targetselectedOption = selectedOption1.getText();
 	System.out.println("Selected Text: " + targetselectedOption);
+	screenshots.takeScreenShots("Multicreate");
 	if (baseselectedOption.equals(targetselectedOption)) {
 		System.out.println("Values in the base record and target record are the same: " + baseselectedOption);
 	} else {
@@ -133,6 +149,7 @@ public void multiCreateSearch(String itemnumber) {
 		System.out.println("Base Record Value: " + baseselectedOption);
 		System.out.println("Target Record Value: " + targetselectedOption);
 	}
+	
 	}
 }
 

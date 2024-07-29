@@ -24,7 +24,7 @@ public class ExcelDataDriven {
          XSSFSheet sheet = wb.getSheetAt(1);
          DataFormatter formatter = new DataFormatter();
 
-         XSSFRow row = sheet.getRow(1); // Row 1 is the first row after the header
+         XSSFRow row = sheet.getRow(2); // Row 1 is the first row after the header
          XSSFCell cell = row.getCell(0); // First column (index 0)
          String itemNumber = formatter.formatCellValue(cell).trim(); // Convert cell value to string and trim extra spaces
 
@@ -107,6 +107,7 @@ public class ExcelDataDriven {
          // Return the data as a 2D array
          return new Object[][]{{itemNumber, fulfillment}};
      }
+     
 	
 
 }

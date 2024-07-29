@@ -2,32 +2,39 @@
 <testng-results ignored="24" total="27" passed="3" failed="0" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2024-07-25T10:34:04 EET" name="Dimensionsweightsandpackages" finished-at="2024-07-25T10:35:12 EET" duration-ms="67822">
+  <suite started-at="2024-07-29T09:21:35 EET" name="Dimensionsweightsandpackages" finished-at="2024-07-29T09:23:03 EET" duration-ms="88184">
     <groups>
     </groups>
-    <test started-at="2024-07-25T10:34:04 EET" name="RequiredScreen" finished-at="2024-07-25T10:35:12 EET" duration-ms="67822">
+    <test started-at="2024-07-29T09:21:35 EET" name="RequiredScreen" finished-at="2024-07-29T09:23:03 EET" duration-ms="88184">
       <class name="com.dwp.qa.test.LoginPageTest">
-        <test-method is-config="true" signature="setUp()[pri:0, instance:com.dwp.qa.test.LoginPageTest@4f0f2942]" started-at="2024-07-25T10:34:05 EET" name="setUp" finished-at="2024-07-25T10:34:05 EET" duration-ms="590" status="PASS">
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.dwp.qa.test.LoginPageTest@4f0f2942]" started-at="2024-07-29T09:21:36 EET" name="setUp" finished-at="2024-07-29T09:21:36 EET" duration-ms="206" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setUp -->
-        <test-method signature="submit()[pri:0, instance:com.dwp.qa.test.LoginPageTest@4f0f2942]" started-at="2024-07-25T10:34:05 EET" name="submit" finished-at="2024-07-25T10:34:24 EET" duration-ms="18266" status="PASS">
+        <test-method signature="submit()[pri:0, instance:com.dwp.qa.test.LoginPageTest@4f0f2942]" started-at="2024-07-29T09:21:36 EET" name="submit" finished-at="2024-07-29T09:22:38 EET" duration-ms="61650" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- submit -->
-        <test-method is-config="true" signature="setUp()[pri:0, instance:com.dwp.qa.test.LoginPageTest@4f0f2942]" started-at="2024-07-25T10:34:24 EET" name="setUp" finished-at="2024-07-25T10:34:24 EET" duration-ms="23" status="PASS">
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.dwp.qa.test.LoginPageTest@4f0f2942]" started-at="2024-07-29T09:22:38 EET" name="setUp" finished-at="2024-07-29T09:22:38 EET" duration-ms="33" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setUp -->
-        <test-method signature="requiredLoginPage()[pri:0, instance:com.dwp.qa.test.LoginPageTest@4f0f2942]" started-at="2024-07-25T10:34:24 EET" name="requiredLoginPage" finished-at="2024-07-25T10:34:31 EET" duration-ms="7182" status="PASS">
+        <test-method signature="requiredLoginPage()[pri:0, instance:com.dwp.qa.test.LoginPageTest@4f0f2942]" started-at="2024-07-29T09:22:38 EET" name="requiredLoginPage" finished-at="2024-07-29T09:22:51 EET" duration-ms="13380" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- requiredLoginPage -->
-        <test-method is-config="true" signature="setUp()[pri:0, instance:com.dwp.qa.test.LoginPageTest@4f0f2942]" started-at="2024-07-25T10:34:31 EET" name="setUp" finished-at="2024-07-25T10:34:31 EET" duration-ms="19" status="PASS">
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.dwp.qa.test.LoginPageTest@4f0f2942]" started-at="2024-07-29T09:22:53 EET" name="setUp" finished-at="2024-07-29T09:22:53 EET" duration-ms="51" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setUp -->
-        <test-method signature="multiCreate()[pri:0, instance:com.dwp.qa.test.LoginPageTest@4f0f2942]" started-at="2024-07-25T10:34:31 EET" name="multiCreate" finished-at="2024-07-25T10:35:12 EET" duration-ms="41233" status="PASS">
+        <test-method signature="multiCreate(java.lang.String)[pri:0, instance:com.dwp.qa.test.LoginPageTest@4f0f2942]" started-at="2024-07-29T09:22:53 EET" name="multiCreate" data-provider="driverTest" finished-at="2024-07-29T09:23:03 EET" duration-ms="10599" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[30460566]]>
+              </value>
+            </param>
+          </params>
           <reporter-output>
           </reporter-output>
         </test-method> <!-- multiCreate -->

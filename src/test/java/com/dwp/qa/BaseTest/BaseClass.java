@@ -66,7 +66,7 @@ public class BaseClass {
         return destinationPath;
     }
 
-    public LoginPage launchApplication() {
+    public LoginPage launchApplication() throws IOException {
         driver = initializeDriver();
         prop = loadProperties();
         LoginPage page = new LoginPage(driver, prop);

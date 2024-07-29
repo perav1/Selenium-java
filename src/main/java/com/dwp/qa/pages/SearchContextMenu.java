@@ -22,120 +22,23 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.dwp.qa.util.TakeScreenshots;
+
 import sun.net.www.protocol.http.HttpURLConnection;
 
-public class SearchContextMenu extends RequiredScreen {
+public class SearchContextMenu extends WebLocators {
 	public WebDriver driver;
 	private SearchResults searchResults1;
-	
+	public TakeScreenshots screenshots;
 	public SearchContextMenu(WebDriver driver) {
 		super(driver);
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
 		searchResults1=new SearchResults(driver);
-		
+		screenshots = new TakeScreenshots(driver);
 	}
 
-	@FindBy(xpath = "//button[normalize-space()='View']")
-	WebElement Viewbutton;
-	@FindBy(xpath = "//button[normalize-space()='Copy to new DWP']")
-	WebElement copyNewDWP;
 	
-	@FindBy(xpath = "(//i[@class='fa fa-th-list fa-2x'])[1]")
-	WebElement detailBurgerMenu;
-	@FindBy(id = "validateRequiredDWP")
-	WebElement validateReqDWP;
-	@FindBy(xpath = "(//div[@class='modal-body'])[1]")
-	WebElement errorMessage;
-	@FindBy(xpath = "//button[normalize-space()='OK']")
-	WebElement alertMessage;
-	@FindBy(xpath = "//div[@id='msgPane']")
-	WebElement messagePane;
-	@FindBy(xpath = "//ul[@class='select2-selection__rendered']")
-	WebElement fullFilment;
-	@FindBy(id = "cpProductiscoveredInfoEdit1")
-	WebElement productCovered;
-	@FindBy(id = "cpProductisvisibleInfoEdit1")
-	WebElement productVisible;
-	@FindBy(id = "ddlCPReducibleInfoEdit1")
-	WebElement cpReducibleInfo;
-	@FindBy(id = "cpCavityInfoEdit1")
-	WebElement cpCavityInfo;
-	@FindBy(id = "ulAllcpVisible")
-	WebElement AllcpVisible;
-	@FindBy(id = "ulAllcpInSameDirection")
-	WebElement allcpInSameDirection;
-	@FindBy(id = "reqCPReductionOptionSelection1")
-	WebElement reqCPReductionOptionSelection;
-	@FindBy(id = "btnUpdateCPReductionOptions")
-	WebElement saveCPReductionOption;
-	@FindBy(id = "ddlCPReductionSubOpt")
-	WebElement cpReductionSub;
-	@FindBy(id = "cpReductionLength")
-	WebElement reductionLenth;
-	@FindBy(id = "cpReductionDiameter")
-	WebElement reductionDiameter;
-	@FindBy(id = "cpLengthInfoEdit1")
-	WebElement cpLength;
-	@FindBy(id = "cpWidthInfoEdit1")
-	WebElement cpWidth;
-	@FindBy(id = "cpHeightInfoEdit1")
-	WebElement cpHeight;
-	@FindBy(xpath = "//div[normalize-space()='DWP is valid. Save / Submit can be performed.']")
-	WebElement successMessage;
-	@FindBy(id = "submitRequiredDWP")
-	WebElement submitReqDWP;
-	@FindBy(xpath = "//button[normalize-space()='OK']")
-	WebElement submitOkButton;
-	@FindBy(xpath = "//button[normalize-space()='Expire']")
-	WebElement expiredButton;
-	@FindBy(xpath = "//button[@type='button'][normalize-space()='Cancel']")
-	WebElement cancelButton;
-	@FindBy(xpath = "//button[normalize-space()='OK']")
-	WebElement okButton;
-	@FindBy(xpath = "//button[normalize-space()='Delete']")
-	WebElement deleteButton;
-	@FindBy(xpath = "//button[normalize-space()='OK']")
-	WebElement deleteOkbutton;
-	@FindBy(xpath = "//button[normalize-space()='Show Actual DWP(s)']")
-	WebElement showActualDWP;
-	@FindBy(id = "showActualConnectedToRequiredLegendContainer")
-	WebElement showActualConnectedContainer;
-	@FindBy(xpath = "//button[normalize-space()='Multi Create']")
-	WebElement multiCreateButton;
-	@FindBy(id = "txtSearchMultiCreateItemNumber")
-	WebElement searchMultiCreateItemNumber;
-	@FindBy(id = "btnMultiCreateSearch")
-	WebElement submitButton;
-	@FindBy(xpath = "(//input[@type='checkbox'])[20]|(//input[@type='checkbox'])[21]")
-	List<WebElement> multiCreateCheckboxs;
-	@FindBy(id = "btnMultiCreate")
-	WebElement createButton;
-	@FindBy(xpath="//button[normalize-space()='Multi Update']")
-	WebElement searchMultiUpdate;
-	@FindBy(id="txtSearchMultiUpdatePANumber")
-	WebElement multiupdatePANumber;
-	@FindBy(id="btnMultiUpdateSearch")
-	WebElement multiUpdateSearch;
-	@FindBy(xpath="(//input[@type='checkbox'])[18]|(//input[@type='checkbox'])[19]|(//input[@type='checkbox'])[20]")
-	List<WebElement> multiUpdateCheckboxs;
-	@FindBy(id="btnMultiUpdateAll")
-	WebElement updateAllAttributes;
-	@FindBy(xpath = "//div[@id='MSG69']")
-	WebElement Message1;
-	@FindBy(id="reqSpecifyUpdateReasonInfoEdit")
-	WebElement reqSpecifyUpdateReason;
-	@FindBy(id="btnProceedSubmitUpdateReason")
-	WebElement proceesSubmitUpdateReason;
-	@FindBy(id = "ulHeightInfoEdit")
-	WebElement ulHeight;
-	@FindBy(xpath="//div[@class='modal-content']")
-	WebElement errorPOPUP;
-	@FindBy(xpath="//i[@class='fa fa-bell faa-ring fa-2x']")
-	WebElement notification;
-	@FindBy(id="notificationBadgeCount")
-	List<WebElement> badgeCont;
-
 	public void openContextMenu(String itemnumber) {
 		ItemNumberSearch.sendKeys(itemnumber);
 		SearchRequiredDWP.click();
@@ -151,9 +54,10 @@ public class SearchContextMenu extends RequiredScreen {
 		Viewbutton.click();
 	}
 
-	public void openCopyNewDWP(String itemnumber, String requirement) throws InterruptedException {
+	public void openCopyNewDWP(String itemnumber, String requirement) throws  IOException, InterruptedException {
 		JSONObject outputJson = new JSONObject();
 		ItemNumberSearch.sendKeys(itemnumber);
+		screenshots.takeScreenShots("Itemnumber");
 		Thread.sleep(2000);
 		SearchRequiredDWP.click();
 		Actions a = new Actions(driver);
@@ -162,6 +66,9 @@ public class SearchContextMenu extends RequiredScreen {
 		wait.until(ExpectedConditions.elementToBeClickable(copyNewDWP));
 		copyNewDWP.click();
 		detailBurgerMenu.click();
+	
+		screenshots.takeScreenShots("detailburgerMenu");
+		Thread.sleep(2000);
 		validateReqDWP.click();
 		System.out.println("Clicked on validateReqDWP");
 		 boolean errorMessageVisible = false;
@@ -248,6 +155,7 @@ public class SearchContextMenu extends RequiredScreen {
 		;
 		String successmessage = submitSuccessMessage.getText();
 		System.out.println("Success:" + successmessage);
+		Thread.sleep(2000);
 		submitOkButton.click();
 		}
 		else
@@ -266,6 +174,7 @@ public class SearchContextMenu extends RequiredScreen {
     		;
     		String successmessage = submitSuccessMessage.getText();
     		System.out.println("Success:" + successmessage);
+    		screenshots.takeScreenShots("successmeesage");
     		submitOkButton.click();
 		}
 	}
@@ -342,7 +251,7 @@ public class SearchContextMenu extends RequiredScreen {
 		int rowCount = rows.size();
 		System.out.println("Total number of rows: " + rowCount);
 		for (int i = 0; i < rowCount; i++) {
-			// Get the background color of the row
+			
 			WebElement row = rows.get(i);
 			String color = row.getCssValue("background-color");
 			System.out.println("Row " + (i + 1) + " Color: " + color);

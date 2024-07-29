@@ -2,11 +2,13 @@
 package com.dwp.qa.test;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -46,10 +48,11 @@ public class LoginPageTest<object> extends BaseClass {
 	private MultiCreate create;
 	private MultiUpdate update;
 	private LoginPage page;
+	
 	DataFormatter formatter=new DataFormatter();
 
 	@BeforeMethod
-	public void setUp() {
+	public void setUp() throws IOException {
 		
 		screen = new RequiredScreen(driver);
 		scontextmenu = new SearchContextMenu(driver);
@@ -58,22 +61,25 @@ public class LoginPageTest<object> extends BaseClass {
 		create=new MultiCreate(driver);
 		update=new MultiUpdate(driver);
 		page = new LoginPage(driver, prop);
-	}
+		
+		
+		}
+	
 
 	@Test
-	public void submit() throws InterruptedException {
+	public void submit() throws InterruptedException, IOException {
 		
 		LoginPage page = launchApplication();
 		
 		page.LoginApplication("email");
-		Thread.sleep(2000);
+		//Thread.sleep(2000);
         page.loginDetails("username", "password");
 		
 	
 
 	}
 	@Test
-	public void requiredLoginPage() throws InterruptedException
+	public void requiredLoginPage() throws InterruptedException, IOException
 	{
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 		 Thread.sleep(2000);
@@ -202,7 +208,7 @@ public class LoginPageTest<object> extends BaseClass {
 	}
 
 	@Test(dataProvider="copyData",dataProviderClass = ExcelDataDriven.class)
-	public void copyNewDWP(String itemnumber,String requirement) throws InterruptedException {
+	public void copyNewDWP(String itemnumber,String requirement) throws InterruptedException, IOException {
 
 		scontextmenu.openCopyNewDWP(itemnumber, requirement);
 	}
@@ -225,15 +231,15 @@ public class LoginPageTest<object> extends BaseClass {
 		scontextmenu.showActualDWPContextMenu("30460566");
 	}
 
-	@Test
-	public void multiCreate() throws InterruptedException {
+	@Test(dataProvider="driverTest",dataProviderClass = ExcelDataDriven.class)
+	public void multiCreate(String itemnumber) throws InterruptedException, IOException {
 		
-		create.multiCreateSearch("30460566");
+		create.multiCreateSearch(itemnumber);
 	}
 
-	@Test
-	public void multiUpdate() {
-		update.multiUpdateSearch("30460566");
+	@Test(dataProvider="driverTest",dataProviderClass = ExcelDataDriven.class)
+	public void multiUpdate(String itemnumber) {
+		update.multiUpdateSearch(itemnumber);
 	}
 
 	@Test(dataProvider="newData",dataProviderClass = ExcelDataDriven.class)

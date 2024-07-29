@@ -13,9 +13,12 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class MultiUpdate extends SearchContextMenu {
-	private SearchResults searchResults1;
+import com.dwp.qa.util.TakeScreenshots;
 
+public class MultiUpdate extends WebLocators {
+	private SearchResults searchResults1;
+     public WebDriver driver;
+     public TakeScreenshots screenshots;
 	public MultiUpdate(WebDriver driver) {
 		super(driver);
 		// TODO Auto-generated constructor stub
@@ -23,6 +26,7 @@ public class MultiUpdate extends SearchContextMenu {
 		PageFactory.initElements(driver, this);
 		// TODO Auto-generated constructor stub
 		searchResults1=new SearchResults(driver);
+		screenshots = new TakeScreenshots(driver);
 	}
 	public void multiUpdateSearch(String itemnumber)
 	{
@@ -35,12 +39,12 @@ public class MultiUpdate extends SearchContextMenu {
 		productCovered.click();
 		Select basedrop1 = new Select(productCovered);
 		WebElement initialOption1 = basedrop1.getFirstSelectedOption();
-		basedrop1.selectByIndex(1);
+		basedrop1.selectByIndex(2);
 		String basevalue1 = basedrop1.getFirstSelectedOption().getText();
 		productVisible.click();
 		Select basedown2 = new Select(productVisible);
 		WebElement initialOption2 = basedown2.getFirstSelectedOption();
-		basedown2.selectByIndex(1);
+		basedown2.selectByIndex(2);
 		String basevalue2 = basedown2.getFirstSelectedOption().getText();
 		if(initialOption1.getText().equals(basevalue1)||initialOption2.getText().equals(basevalue2) )
 		{
@@ -64,6 +68,7 @@ public class MultiUpdate extends SearchContextMenu {
 		WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(20));
 		wait2.until(ExpectedConditions.elementToBeClickable(reqSpecifyUpdateReason)).click();
 	    searchResults1.selectDropdownOption(reqSpecifyUpdateReason, 2);
+	    screenshots.takeScreenShots("UpdateReasonPOPUP");
 	    wait2.until(ExpectedConditions.elementToBeClickable(proceesSubmitUpdateReason)).click();
 		
 		WebElement submitSuccessMessage = wait2.until(ExpectedConditions
@@ -71,17 +76,20 @@ public class MultiUpdate extends SearchContextMenu {
 		;
 		String successmessage = submitSuccessMessage.getText();
 		System.out.println("Success:" + successmessage);
+		screenshots.takeScreenShots("successmessage");
 		submitOkButton.click();
 		WebElement searchpane = wait2.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//i[@class='chevron fa fa-fw col-lg-1']")));
 		searchpane.click();
 		wait2.until(ExpectedConditions.elementToBeClickable(ItemNumberSearch));
 		ItemNumberSearch.clear();
 		ItemNumberSearch.sendKeys(itemnumber);
+		screenshots.takeScreenShots("itemnumber");
 		SearchRequiredDWP.click();
 		Actions a = new Actions(driver);
 
 		wait2.until(ExpectedConditions.elementToBeClickable(OpenRecord));
 		a.contextClick(OpenRecord).build().perform();
+		screenshots.takeScreenShots("contextmenu");
 		searchMultiUpdate.click();
 		multiupdatePANumber.sendKeys("1122");
 		multiUpdateSearch.click();
@@ -96,6 +104,7 @@ public class MultiUpdate extends SearchContextMenu {
 			WebDriverWait wait1 = new WebDriverWait(driver, Duration.ofSeconds(30));
 			wait1.until(ExpectedConditions.elementToBeClickable(multiUpdateCheckbox));
 			multiUpdateCheckbox.click();
+			screenshots.takeScreenShots("checkboxs");
 			
 		}
 		updateAllAttributes.click();
@@ -106,6 +115,7 @@ public class MultiUpdate extends SearchContextMenu {
 		WebElement copyNumber = driver.findElement(By.xpath(
 				"(//td[translate(normalize-space(), '0123456789', '0000000000') = '00000000'])[6]"));
 		String ItemNumber = copyNumber.getText();
+		screenshots.takeScreenShots("targetRecords");
 		WebElement closeButton = driver.findElement(By.xpath("//button[@title='Close']"));
 
 		closeButton.click();
@@ -113,6 +123,7 @@ public class MultiUpdate extends SearchContextMenu {
 		searchpane1.click();
 		ItemNumberSearch.clear();
 		ItemNumberSearch.sendKeys(ItemNumber);
+		screenshots.takeScreenShots("itemnumber");
 		SearchRequiredDWP.click();
 		wait2.until(ExpectedConditions.elementToBeClickable(OpenRecord));
 		OpenRecord.click();
@@ -129,6 +140,7 @@ public class MultiUpdate extends SearchContextMenu {
 		{
 			System.out.println("Dropdown values are different for base and target records.");
 		}
+		screenshots.takeScreenShots("MultiUpdate");
 		}
 		}
 		catch(Exception e)

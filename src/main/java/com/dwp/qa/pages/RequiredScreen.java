@@ -15,6 +15,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.asserts.SoftAssert;
 
+import com.dwp.qa.util.TakeScreenshots;
+
 import static org.testng.Assert.assertTrue;
 
 import java.awt.Window;
@@ -34,94 +36,24 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.StaleElementReferenceException;
 
-public class RequiredScreen {
+public class RequiredScreen extends WebLocators {
 	public WebDriver driver;
 	private SearchResults searchResults1;
+	public TakeScreenshots screenshots;
 
 	public RequiredScreen(WebDriver driver) {
-		super();
+		super(driver);
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
 		searchResults1 = new SearchResults(driver);
+		screenshots = new TakeScreenshots(driver);
 	}
 
-	@FindBy(css = "a[href='/Required/Required']")
-	WebElement Screen;
-
-	@FindBy(id = "itemNameReqSearch")
-	WebElement TName;
-	@FindBy(id = "populateItemNumberReq")
-	WebElement Search;
-
-	@FindBy(xpath = "//li[@id='notificationBadgeContainer']//a[@href='#']")
-	WebElement Notification;
-	@FindBy(xpath = "//div[@id='MSG1002']")
-	WebElement Message;
-	@FindBy(id = "itemNumberReqSearch")
-	WebElement ItemNumberField;
-	@FindBy(id = "itemNumberReqSearch")
-	WebElement ItemNumberSearch;
-	@FindBy(id = "searchRequiredDWP")
-	WebElement SearchRequiredDWP;
-	@FindBy(id = "reqSearchLoadInfo")
-	List<WebElement> searchResults;
-	@FindBy(xpath = "//button[@id='showItemSearchDialog']//span[@class='fa fa-book fa-fw']")
-	WebElement ItemSearchDialog;
-	@FindBy(id = "itemNamePattern")
-	WebElement ItemNameSearch;
-	@FindBy(id = "fuzzyitem")
-	WebElement radioSearchitem;
-	@FindBy(id = "searchItemName")
-	WebElement searchitemname;
-	@FindBy(id = "addItemNumber")
-	WebElement Additemnumber;
-	@FindBy(xpath = "//table[@id='requiredSearchResults']/tbody/tr[1]")
-	WebElement OpenRecord;
-	@FindBy(id = "productResponsibleUnitReqSearch")
-	WebElement productResponsibleUnitReqSearch;
-	@FindBy(id = "hfbReqSearch")
-	WebElement HFBSearch;
-	@FindBy(id = "paNumberReqSearch")
-	WebElement paNumberSearch;
-	@FindBy(xpath = "//button[@id='showProductAreaDialog']//span[@class='fa fa-book fa-fw']")
-	WebElement showProductArea;
-	@FindBy(id = "productAreaNumberPattern")
-	WebElement PANumber;
-	@FindBy(id = "productAreaNamePattern")
-	WebElement PAName;
-	@FindBy(id = "searchPAName")
-	WebElement searchPAnumber;
-	@FindBy(name = "ProductArea")
-	WebElement productAreaName;
-	@FindBy(id = "issuerReqSearch")
-	WebElement issuerReqSearch;
-	@FindBy(id = "clearAll")
-	WebElement clearAllSearch;
-	@FindBy(xpath = "//input[@id='dwpStatusCreatedReqSearch' and @value='false']")
-	WebElement draftStatus;
-
-	@FindBy(xpath = "//input[@id='dwpStatusExpiredReqSearch' and @value='true']")
-	WebElement expiredStatus;
-	@FindBy(xpath = "//input[@id='dwpStatusPreliminaryReqSearch' and @value='false']")
-	WebElement preliminaryStatus;
-	@FindBy(xpath = "//input[@id='dwpStatusCompletedReqSearch' and @value='false']")
-	WebElement submittedStatus;
-	@FindBy(xpath = "//div[@class='panel-body']")
-	WebElement Message1;
-	@FindBy(id = "packagingRequirementNumberReqSearch")
-	WebElement packagingRequirementNReqSearch;
-	@FindBy(id = "packagingRequirementVersionReqSearch")
-	WebElement packagingRequirementVReqSearch;
-	@FindBy(id = "packagingSolutionPSMIDReqSearch")
-	WebElement packagingSolutionPSMIDReqSearch;
-	@FindBy(xpath = "//button[normalize-space()='OK']")
-	WebElement warningOk;
-	@FindBy(xpath = "//i[@class='chevron fa fa-fw col-lg-1']")
-	WebElement searchPane;
-
-	public void RequiredScreenLogin() {
+	public void RequiredScreenLogin() throws IOException, InterruptedException {
 
 		Screen.click();
+		Thread.sleep(10000);
+		screenshots.takeScreenShots("RequiredScreen");
 		/*
 		 * driver.switchTo().newWindow(WindowType.TAB); Set<String>
 		 * windows=driver.getWindowHandles(); java.util.Iterator<String>
@@ -140,13 +72,16 @@ public class RequiredScreen {
 			Search.click();
 
 			if (name.equals("BÄSTIS hook beige")) {
-
+                Thread.sleep(2000);
 				SearchRequiredDWP.click();
 				OpenRecord.click();
+
+				screenshots.takeScreenShots("DetailPane");
 			} else if (name.equals("12")) {
 				Notification.click();
 				String validationMessage = Message.getText();
 				System.out.println("Validation Message: " + validationMessage);
+				screenshots.takeScreenShots("ValidationMessage");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -166,11 +101,12 @@ public class RequiredScreen {
 
 			ItemNumberSearch.clear();
 			ItemNumberSearch.sendKeys(itemnumber);
+			screenshots.takeScreenShots("itemnumber");
 			Thread.sleep(2000);
 
 			SearchRequiredDWP.click();
 			wait.until(ExpectedConditions.elementToBeClickable(OpenRecord)).click();
-
+			screenshots.takeScreenShots("DetailPane");
 			return searchResults1.getItemTotalRecords();
 		} catch (Exception e) {
 			e.printStackTrace();
